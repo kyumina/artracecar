@@ -56,7 +56,7 @@ class image_converter:
                 self.leftv=-30
                 self.rightv=30
                 print("右回転")
-            elif p.pose.pose.position.z*100<80:
+            elif p.pose.pose.position.z*100<1500:
                 print("move")
                 resid=p.id
             else:
