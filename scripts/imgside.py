@@ -31,6 +31,16 @@ class image_converter:
     self.ar_sub=rospy.Subscriber("aruco_marker_publisher/markers", MarkerArray, self.set_arparam)
     self.ser=rospy.Service("get_speed_req",GetSpeedReq,self.setspeed)
 
+  def relaymarker(self,x):
+    dx=x+50/2
+    if dx>0:
+      self.leftv=dx+30
+      self.rightv=30
+    else:
+      self.leftv=30
+      self.rightv=-dx+30
+    return 1
+
   def setspeed(self,req):
     resid=-1
     if req.req==1:
@@ -47,6 +57,8 @@ class image_converter:
             print("markerID:"+str(p.id))
             print("x:"+str(x))
             print("z:"+str(z))
+            if (self.relaymarker(x) if p.id in range(10,19+1) else 0):
+              continue
             theta=np.rad2deg(np.arctan(x/z))
             if theta<-10:
                 self.leftv=30
