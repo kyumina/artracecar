@@ -55,6 +55,7 @@ class image_converter:
             print("z:"+str(z))
             if (self.relaymarker(x) if (p.id in range(10,19+1) and z>100) else 0):
               continue
+            beforez=z #中継は関与しない
             theta=np.rad2deg(np.arctan(x/z))
             if theta<-10:
                 self.leftv=30
