@@ -47,10 +47,6 @@ class image_converter:
         beforez=1000 #比較用z
         for p in self.markers:
             x=p.pose.pose.position.x*100
-            if p.id in [0,1,2,4,5]: #右折の時は左側に-50されているので足す
-                x+=50
-            else: #左折のときは右側に+50されているので引く
-                x-=50
             z=p.pose.pose.position.z*100
             if z>beforez:
                 continue
