@@ -65,14 +65,18 @@ class image_converter:
                 self.leftv=-30
                 self.rightv=30
                 print("右回転")
-            elif p.pose.pose.position.z*100<100:
+            elif p.pose.pose.position.z*100<60:
                 print("move")
                 resid=p.id
                 self.leftv=30
                 self.rightv=30
             else:
-                self.leftv=50
-                self.rightv=50
+                if z>200:
+                    self.leftv=100
+                    self.rightv=100
+                else:
+                    self.leftv=50
+                    self.rightv=50
                 print("まっすぐ")
         return GetSpeedReqResponse(resid,self.leftv,self.rightv)
     elif req.req==2:
