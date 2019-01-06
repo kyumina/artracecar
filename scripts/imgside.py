@@ -27,6 +27,9 @@ class image_converter:
     self.leftv=0
     self.rightv=0
     self.markers=[]
+    self.marker_order=(1,2,3,4,5,6) #master
+    self.marker_order_iter=iter(self.marker_order)
+    self.now_marker=self.marker_order_iter.next() #最初の番号を出しておく
     self.lastarupdatetime=time.time()
     self.ar_sub=rospy.Subscriber("aruco_marker_publisher/markers", MarkerArray, self.set_arparam)
     self.ser=rospy.Service("get_speed_req",GetSpeedReq,self.setspeed)
@@ -44,18 +47,20 @@ class image_converter:
   def setspeed(self,req):
     resid=-1
     if req.req==1:
-        beforez=1000 #比較用z
+        resid=-2
         for p in self.markers:
+            if self.now_marker != p.id:
+                continue
+            #以下のコードは次のマーカが見つかっている前提
+            resid=-1
             x=p.pose.pose.position.x*100
             z=p.pose.pose.position.z*100
-            if z>beforez:
-                continue
             print("markerID:"+str(p.id))
             print("x:"+str(x))
             print("z:"+str(z))
+
             if (self.relaymarker(x) if (p.id in range(10,19+1) and z>100) else 0):
               continue
-            beforez=z #中継は関与しない
             theta=np.rad2deg(np.arctan(x/z))
             if theta<-10:
                 self.leftv=30
@@ -65,11 +70,16 @@ class image_converter:
                 self.leftv=-30
                 self.rightv=30
                 print("右回転")
-            elif p.pose.pose.position.z*100<60:
+            elif z<60:
                 print("move")
                 resid=p.id
                 self.leftv=30
                 self.rightv=30
+                try:
+                    self.now_marker=self.marker_order_iter.next()
+                except StopIteration:
+                    self.marker_order_iter=iter(self.marker_order)
+                    self.now_marker=self.marker_order_iter.next()
             else:
                 if z>200:
                     self.leftv=100
@@ -78,6 +88,11 @@ class image_converter:
                     self.leftv=50
                     self.rightv=50
                 print("まっすぐ")
+        if resid==-2:
+            #次のマーカーが見つからない時回す
+            self.leftv=-30
+            self.rightv=30
+            resid=-1
         return GetSpeedReqResponse(resid,self.leftv,self.rightv)
     elif req.req==2:
         #最後にマーカーを取得してから1s経つとマーカー無し(-1)と返す
