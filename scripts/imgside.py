@@ -53,7 +53,7 @@ class image_converter:
             print("markerID:"+str(p.id))
             print("x:"+str(x))
             print("z:"+str(z))
-            if (self.relaymarker(x) if p.id in range(10,19+1) else 0):
+            if (self.relaymarker(x) if (p.id in range(10,19+1) and z>100) else 0):
               continue
             theta=np.rad2deg(np.arctan(x/z))
             if theta<-10:
