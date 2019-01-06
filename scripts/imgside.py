@@ -74,7 +74,7 @@ class image_converter:
                 print("まっすぐ")
         return GetSpeedReqResponse(resid,self.leftv,self.rightv)
     elif req.req==2:
-        #最後にマーカーを取得してから1s経つとマーカー無しと返す
+        #最後にマーカーを取得してから1s経つとマーカー無し(-1)と返す
         elapsedtime=time.time()-self.lastarupdatetime
         if elapsedtime>1:
             return GetSpeedReqResponse(resid,0,0)
