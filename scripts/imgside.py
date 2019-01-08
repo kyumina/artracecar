@@ -49,7 +49,7 @@ class image_converter:
     if req.req==1:
         resid=-2
         for p in self.markers:
-            if self.now_marker != p.id:
+            if (self.now_marker != p.id) and  time.time()-self.lastarupdatetime>1:
                 continue
             #以下のコードは次のマーカが見つかっている前提
             resid=-1
